@@ -1,0 +1,26 @@
+.container{
+    padding:100px 0;
+}
+.card .card-img-top{
+    height: 600px;
+}
+.card .img-box .card-img-top{
+    transition: .5s;
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+    height: 100%;
+}
+.card .img-box img:hover{
+    scale: 1.2;
+    transition: .5s;
+}
+.dropdown-menu li:hover{
+    cursor: pointer;
+    background: #000;
+    color: #fff;
+}
+.dropdown-menu li.active{
+    background: #000;
+    color: #fff;
+}
