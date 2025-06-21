@@ -1,8 +1,54 @@
 *{
     font-family: "Michroma", sans-serif;;
 }
+:root{
+    --main-c:rgb(5, 153, 73);
+    --main-c-rgb:rgba(5, 153, 73,.5);
+    --text-c: #000;
+    --selection-c:#fff;
+}
+[data-bs-theme=dark]{
+    --main-c:#057249;
+    --main-c-rgb:rgba(5, 115, 73,.5);
+    --text-c: #ffffff;
+    --selection-c:black;
+    --bs-body-bg:#171614;
+    --bs-box-shadow: 0 0.2rem 1rem #282723;
+}
+::selection {
+    background: var(--main-c);
+    color: var(--selection-c);
+}
+.navbar{
+    background: var(--main-c);
+}
+.navbar i{
+    cursor: pointer;
+}
+.navbar-brand img{
+    width: 30px;
+}
+.navbar img{
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+    object-position: center;
+}
+.form-control {
+    border: var(--bs-border-width) solid var(--main-c);
+}
+.form-control:focus{
+    box-shadow: 0 0 0 .25rem var(--main-c-rgb);
+}
 .container{
     padding:100px 0;
+}
+.dropdown .btn:hover {
+    color: var(--main-c);
+}
+.card-body{
+    background-color: var(--main-c);
+    color: var(--text-c);
 }
 .card .card-img-top{
     height: 600px;
@@ -20,16 +66,35 @@
 }
 .dropdown-menu li:hover{
     cursor: pointer;
-    background: #000;
+    background: var(--main-c);
     color: #fff;
 }
 .dropdown-menu li.active{
-    background: #000;
+    background: var(--main-c-rgb);
     color: #fff;
+}
+.btn-outline-dark {
+    --bs-btn-color: var(--main-c-rgb);
+    --bs-btn-border-color: var(--main-c-rgb);
 }
 .top{
     height: 50vh;
 }
 .top h1{
-    font-size: 120px;
+    font-size: 5rem;
+    color: var(--main-c);
+}
+.active>.page-link, .page-link.active {
+    color: var(--text-c);
+    background-color: var(--main-c);
+    border-color: var(--main-c);
+}
+.page-link{
+    color: var(--main-c);
+}
+.page-link:hover {
+    color: var(--main-c-rgb);
+}
+footer a{
+    color: var(--main-c);
 }

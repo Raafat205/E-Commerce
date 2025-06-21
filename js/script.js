@@ -73,14 +73,14 @@ function displayProdacts(data) {
   data.forEach((product) => {
     html += `
       <div class="col-md-4 mb-3">
-        <div class="card shadow">
+        <div class="card shadow overflow-hidden rounded-3">
           <div class="img-box overflow-hidden">
             <img src="${product.images[0]}" class="card-img-top bg-dark" alt="${product.title}">
           </div>
           <div class="card-body">
             <h5 class="card-title">${product.title.split(" ").slice(0, 3).join(" ")}</h5>
             <div class="d-flex justify-content-between align-items-center ratings w-25 mb-1">
-              ${Array.from({ length: Math.round(product.rating) }, () => `<i class="fa-solid fa-star text-warning"></i>`).join("")}
+              ${Array.from({ length: Math.round(product.rating) }, () => `<i class="fa-solid fa-star"></i>`).join("")}
               ${Array.from({ length: 5 - Math.round(product.rating) }, () => `<i class="fa-regular fa-star"></i>`).join("")}
             </div>
             ${
@@ -130,3 +130,23 @@ document.querySelector(".pagination").addEventListener("click", (e) => {
     updatePagination();
   }
 });
+
+
+var darkMoodBtn= document.querySelector(".navbar i");
+
+darkMoodBtn.addEventListener("click",e=>darkMood())
+
+function darkMood(){
+  var page=document.getElementsByTagName("html")[0];
+  var pageTheme=page.getAttribute("data-bs-theme");
+  if(pageTheme=="light"){
+      pageTheme="dark";
+      darkMoodBtn.classList.remove("fa-moon");
+      darkMoodBtn.classList.add("fa-sun");
+  }else{
+      pageTheme="light";
+      darkMoodBtn.classList.add("fa-moon");
+      darkMoodBtn.classList.remove("fa-sun");
+  }
+  page.setAttribute("data-bs-theme",pageTheme);
+}
