@@ -46,12 +46,29 @@
 .dropdown .btn:hover {
     color: var(--main-c);
 }
+
+.spinner {
+   width: 56px;
+   height: 56px;
+   border-radius: 50%;
+   border: 9px solid;
+   border-color: #dbdcef;
+   border-right-color: var(--main-c);
+   animation: spinner-d3wgkg 1s infinite linear;
+}
+
+@keyframes spinner-d3wgkg {
+   to {
+      transform: rotate(1turn);
+   }
+}
+
 .card-body{
     background-color: var(--main-c);
     color: var(--text-c);
 }
-.card .card-img-top{
-    height: 600px;
+.card .card-img-top,.spinnerBox{
+    height: 400px;
 }
 .card .img-box .card-img-top{
     transition: .5s;
@@ -97,4 +114,7 @@
 }
 footer a{
     color: var(--main-c);
+}
+.modal-header{
+    background: var(--main-c);
 }

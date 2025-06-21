@@ -10,8 +10,11 @@ var currentFilteredProducts = [];
 getProducts();
 
 async function getProducts() {
+  
   var res = await fetch("https://dummyjson.com/products/category/smartphones");
   data = await res.json();
+  console.log(data.products);
+  
   currentFilteredProducts = data.products;
   updateProductsDisplay();
 }
@@ -32,6 +35,7 @@ searchInput.addEventListener("input", () => {
 });
 
 function updateProductsDisplay() {
+  if (!data.products) return; 
   let filtered = data.products;
   const searchValue = searchInput.value.toLowerCase();
   if (searchValue) {
@@ -67,15 +71,24 @@ function displayPage(page) {
   }
 }
 
+function hideSpin(e){
+  var spinner=document.querySelector(`.spin-${e}`);
+  spinner.classList.add("d-none");
+}
+
 function displayProdacts(data) {
+
   const row = document.getElementById("myRow");
   let html = "";
-  data.forEach((product) => {
+  data.forEach((product, index) => {
     html += `
       <div class="col-md-4 mb-3">
         <div class="card shadow overflow-hidden rounded-3">
           <div class="img-box overflow-hidden">
-            <img src="${product.images[0]}" class="card-img-top bg-dark" alt="${product.title}">
+            <div class="d-flex justify-content-center align-items-center my-5 spinnerBox spin-${index}">
+              <div class="spinner "></div>
+            </div>
+            <img src="${product.thumbnail}" class="card-img-top bg-dark" alt="${product.title}" onload="hideSpin(${index})">
           </div>
           <div class="card-body">
             <h5 class="card-title">${product.title.split(" ").slice(0, 3).join(" ")}</h5>
@@ -89,6 +102,10 @@ function displayProdacts(data) {
                 : `<span class="text-danger">Out of Stock</span>`
             }
           </div>
+        </div>
+        <div class="cntrls mt-2">
+        <button class="btn btn-outline-dark" onclick="dltProduct(${product.id})">Delete</button>
+        <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#editModal" onclick="setEditForm(${product.id})">Edit</button>
         </div>
       </div>`;
   });
@@ -150,3 +167,54 @@ function darkMood(){
   }
   page.setAttribute("data-bs-theme",pageTheme);
 }
+
+function dltProduct(e){
+ data.products=data.products.filter(prod=>prod.id!=e);
+  updateProductsDisplay();
+}
+
+  var titleInput;
+  var productTitleInput=document.getElementById("productTitleInput");
+  var productPriceInput=document.getElementById("productPriceInput");
+  var productDescriptionInput=document.getElementById("productDescriptionInput");
+function setEditForm(e){
+  var product=data.products.find(prod=>prod.id==e);
+  titleInput=product.title;
+  productTitleInput.value=product.title;
+  productPriceInput.value=product.price;
+  productDescriptionInput.value=product.description;
+}
+
+function editProduct() {
+  var id = saveChangesBtn.getAttribute("data-id");
+  var product = data.products.find(prod => prod.id == id);
+  if (product) {
+    product.title = productTitleInput.value;
+    product.price = productPriceInput.value;
+    product.description = productDescriptionInput.value;
+    updateProductsDisplay();
+  }
+}
+
+function checkAvailability(){
+  var checker=data.products.some(prod=>prod.title==productTitleInput.value)&&titleInput!=productTitleInput.value;
+  if(checker)
+  document.getElementById("titleAlert").innerHTML="Product Name Unavailable";
+  else
+  document.getElementById("titleAlert").innerHTML="";
+  return checker;
+}
+
+function editBtnCheck(){
+  if(!checkAvailability()&&productTitleInput.value&&productPriceInput.value&&productDescriptionInput.value)
+    saveChangesBtn.disabled=false;
+  else
+    saveChangesBtn.disabled=true;
+}
+
+productTitleInput.addEventListener("input",e=>{
+  checkAvailability()
+  editBtnCheck();
+})
+productPriceInput.addEventListener("input",e=>editBtnCheck())
+productDescriptionInput.addEventListener("input",e=>editBtnCheck())
