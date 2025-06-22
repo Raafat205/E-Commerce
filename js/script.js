@@ -104,7 +104,7 @@ function displayProdacts(data) {
           </div>
         </div>
         <div class="cntrls mt-2">
-        <button class="btn btn-outline-dark" onclick="dltProduct(${product.id})">Delete</button>
+        <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="dltProduct(${product.id})">Delete</button>
         <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#editModal" onclick="setEditForm(${product.id})">Edit</button>
         </div>
       </div>`;
@@ -168,9 +168,33 @@ function darkMood(){
   page.setAttribute("data-bs-theme",pageTheme);
 }
 
-function dltProduct(e){
- data.products=data.products.filter(prod=>prod.id!=e);
+async function deleteProduct(id) {
+  const res = await fetch(`https://dummyjson.com/products/${id}`, {
+    method: 'DELETE'
+  });
+  const data = await res.json();
+  console.log("Deleted:", data);
+}
+async function dltProduct(e){
+  if (!confirmDelete()) return;
+  await deleteProduct(e);
+  data.products=data.products.filter(prod=>prod.id!=e);
   updateProductsDisplay();
+}
+var deleteModal = document.getElementById("deleteModal");
+async function confirmDelete(){
+  return new Promise((resolve) => {
+    deleteModal.querySelector(".btn-danger").onclick = () => {
+      modalInstance.hide();
+      resolve(true);
+    };
+    const onModalHidden = () => {
+      deleteModal.removeEventListener("hidden.bs.modal", onModalHidden);
+      resolve(false);
+    };
+
+    deleteModal.addEventListener("hidden.bs.modal", onModalHidden, { once: true });
+  });
 }
 
   var titleInput;
