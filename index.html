@@ -120,10 +120,11 @@
               />
               <p class="mb-0" id="titleAlert"></p>
               <input
-                type="text"
+                type="number"
                 id="productPriceInput"
                 class="form-control mb-2 p-2"
-                placeholder="Product Price.. $"
+                placeholder="Product Price.. $",
+                min="0"
               />
               <textarea
                 rows="5"
@@ -134,7 +135,9 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-dark" id="saveChangesBtn" disabled>Save changes</button>
+            <button type="button" class="btn btn-dark" id="saveChangesBtn" disabled 
+              data-bs-dismiss="modal"
+              aria-label="Close">Save changes</button>
           </div>
         </div>
       </div>

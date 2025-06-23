@@ -176,14 +176,15 @@ async function deleteProduct(id) {
   console.log("Deleted:", data);
 }
 async function dltProduct(e){
-  if (!confirmDelete()) return;
+  if (!await confirmDelete()) return;
   await deleteProduct(e);
   data.products=data.products.filter(prod=>prod.id!=e);
   updateProductsDisplay();
 }
 var deleteModal = document.getElementById("deleteModal");
-async function confirmDelete(){
+async function confirmDelete() {
   return new Promise((resolve) => {
+    const modalInstance = bootstrap.Modal.getOrCreateInstance(deleteModal);
     deleteModal.querySelector(".btn-danger").onclick = () => {
       modalInstance.hide();
       resolve(true);
@@ -192,33 +193,67 @@ async function confirmDelete(){
       deleteModal.removeEventListener("hidden.bs.modal", onModalHidden);
       resolve(false);
     };
-
     deleteModal.addEventListener("hidden.bs.modal", onModalHidden, { once: true });
+    modalInstance.show();
   });
 }
+
 
   var titleInput;
   var productTitleInput=document.getElementById("productTitleInput");
   var productPriceInput=document.getElementById("productPriceInput");
   var productDescriptionInput=document.getElementById("productDescriptionInput");
+
+  var ogStats;
 function setEditForm(e){
   var product=data.products.find(prod=>prod.id==e);
   titleInput=product.title;
   productTitleInput.value=product.title;
   productPriceInput.value=product.price;
   productDescriptionInput.value=product.description;
+    console.log("first",ogStats);
+
+  ogStats=[product.title,product.price,product.description];
+    console.log("second",ogStats);
+    
+  editBtnCheck();
+  saveChangesBtn.setAttribute("data-id", e);
+}
+async function editAPIProduct(id, productData) {
+  const res = await fetch(`https://dummyjson.com/products/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(productData)
+  });
+  const data = await res.json();
+  console.log("Edited:", data);
+  return data;
 }
 
-function editProduct() {
+
+async function editProduct() {
   var id = saveChangesBtn.getAttribute("data-id");
   var product = data.products.find(prod => prod.id == id);
   if (product) {
-    product.title = productTitleInput.value;
-    product.price = productPriceInput.value;
-    product.description = productDescriptionInput.value;
+    const updatedData = {
+      title: productTitleInput.value,
+      price: productPriceInput.value,
+      description: productDescriptionInput.value
+    };
+    const updatedProduct = await editAPIProduct(id, updatedData);
+    
+    product.title = updatedProduct.title;
+    product.price = updatedProduct.price;
+    product.description = updatedProduct.description;
     updateProductsDisplay();
+
+    console.log("third",ogStats);
+    
   }
 }
+
 
 function checkAvailability(){
   var checker=data.products.some(prod=>prod.title==productTitleInput.value)&&titleInput!=productTitleInput.value;
@@ -230,15 +265,24 @@ function checkAvailability(){
 }
 
 function editBtnCheck(){
-  if(!checkAvailability()&&productTitleInput.value&&productPriceInput.value&&productDescriptionInput.value)
+  var ogChecker=(ogStats[0]==productTitleInput.value&&
+    ogStats[1]==productPriceInput.value&&
+    ogStats[2]==productDescriptionInput.value);
+  if(!checkAvailability()&&!ogChecker&&productTitleInput.value&&productPriceInput.value&&productDescriptionInput.value)
     saveChangesBtn.disabled=false;
   else
     saveChangesBtn.disabled=true;
 }
 
 productTitleInput.addEventListener("input",e=>{
-  checkAvailability()
+  checkAvailability();
   editBtnCheck();
 })
 productPriceInput.addEventListener("input",e=>editBtnCheck())
+productPriceInput.addEventListener("keydown", function(e) {
+  if (e.key === "-") {
+    e.preventDefault();
+  }
+});
 productDescriptionInput.addEventListener("input",e=>editBtnCheck())
+saveChangesBtn.addEventListener("click", e => editProduct());
